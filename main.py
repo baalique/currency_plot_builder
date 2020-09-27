@@ -3,9 +3,9 @@ from PyQt5 import QtWidgets
 import pyqtgraph as pg
 import sys
 
-import plot_builder.ui_settings as ui
-import plot_builder.design as design
 import currency
+import plot_builder.design as design
+import plot_builder.ui_settings as ui
 
 
 class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
@@ -24,8 +24,7 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
 
         self.buildButton.clicked.connect(self.build_plot)
 
-    def build_plot(self):
-        print('BUILD!')
+    def __get_data(self):
         base_currency = self.baseCombo.currentText()
         convert_currency = self.convertCombo.currentText()
 
@@ -40,11 +39,12 @@ class MainWindow(QtWidgets.QMainWindow, design.Ui_MainWindow):
         print(data)
         days = [int(day[0].replace('-', '')) for day in data]
         rates = [day[1] for day in data]
+        return days, rates
 
+    def build_plot(self):
         self.graphWidget = pg.PlotWidget()
         self.setCentralWidget(self.graphWidget)
-
-        self.graphWidget.plot(days, rates)
+        self.graphWidget.plot(*self.__get_data())
 
 
 def main():
